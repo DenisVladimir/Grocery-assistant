@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from food.models import AmountIngredient, Ingredient, Recipe, Tag
 from rest_framework import serializers
-from users.models import User
+from users.models import CustomUser, Follow, User
 from .utils import delete_old_ingredients
 
 
@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = (
             'email', 'id', 'username', 'first_name',
             'last_name', 'is_subscribed'
@@ -21,7 +21,6 @@ class UserSerializer(serializers.ModelSerializer):
             return obj.following.filter(
                 user=self.context['request'].user
             ).exists()
-        return False
 
     def validate(self, data):
         if data.get('username') == 'me':
@@ -40,7 +39,7 @@ class FollowSerializer(UserSerializer):
     recipes_count = serializers.SerializerMethodField()
 
     class Meta:
-        model = User
+        model = Follow
         fields = (
             'email', 'id', 'username', 'first_name',
             'last_name', 'is_subscribed', 'recipes', 'recipes_count'
@@ -127,24 +126,16 @@ class FullRecipeSerializer(serializers.ModelSerializer):
         )
 
     def get_is_favorited(self, obj):
-        if (
-            self.context['request'].user.is_authenticated
-            and obj.favorite_recipes.filter(
+        return (self.context['request'].user.is_authenticated
+                and obj.favorite_recipes.filter(
                 user=self.context['request'].user
-            ).exists()
-        ):
-            return True
-        return False
+                ).exists())
 
     def get_is_in_shopping_cart(self, obj):
-        if (
-            self.context['request'].user.is_authenticated
-            and obj.shopping_list_recipes.filter(
+        return (self.context['request'].user.is_authenticated
+                and obj.shopping_list_recipes.filter(
                 user=self.context['request'].user
-            ).exists()
-        ):
-            return True
-        return False
+                ).exists())
 
 
 class RecordRecipeSerializer(FullRecipeSerializer):
@@ -165,21 +156,18 @@ class RecordRecipeSerializer(FullRecipeSerializer):
     def taking_validated_data(self, validated_data):
         queryset_tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
+
         queryset_amount_ingredients = []
         for new_ingredient in ingredients:
             ingredient = get_object_or_404(
                 Ingredient,
                 pk=new_ingredient['id']
             )
-            amount_ingredient, created = (
-                AmountIngredient.objects.get_or_create(
-                    ingredient=ingredient,
-                    amount=new_ingredient['amount']
-                )
-            )
-            if created:
-                amount_ingredient.save()
-            queryset_amount_ingredients.append(amount_ingredient)
+            queryset_amount_ingredients.append(ingredient)
+        try:
+            AmountIngredient.objects.bulk_create(queryset_amount_ingredients)
+        except Exception as e:
+            print('Ошибка записи в БД', e)
         return queryset_tags, queryset_amount_ingredients
 
     def create(self, validated_data):

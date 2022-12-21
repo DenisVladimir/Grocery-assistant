@@ -4,6 +4,7 @@ from django.contrib.auth.hashers import check_password
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from .mixins import CustomCreateAndDeleteMixin
 from food.models import (AmountIngredient, FavoriteRecipe, Ingredient, Recipe,
                          ShoppingList, Tag)
 from rest_framework import mixins, permissions, status, viewsets
@@ -14,8 +15,8 @@ from .filters import RecipeFilterBackend, IngredientSearchFilterBackend
 from .permissions import RecipePermission, UserPermission
 from .serializers import (FollowSerializer, FullRecipeSerializer,
                           IngredientSerializer, PasswordSerializer,
-                          RecordRecipeSerializer, SmallRecipeSerializer,
-                          TagSerializer, UserSerializer)
+                          RecordRecipeSerializer, TagSerializer,
+                          UserSerializer)
 from .utils import PageLimitPaginator, delete_old_ingredients
 
 
@@ -174,37 +175,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'attachment; filename="%s"' % 'shopping_list.txt'
         )
         return response
-
-
-class CustomCreateAndDeleteMixin:
-    def custom_create(self, request, id, attribute, model):
-        recipe = get_object_or_404(Recipe, pk=id)
-        queryset = getattr(recipe, attribute)
-        if not queryset.filter(
-            user=request.user
-        ).exists():
-            model.objects.create(
-                user=request.user,
-                recipe=recipe
-            )
-            serializer = SmallRecipeSerializer(
-                recipe, context={'request': request}
-            )
-            return Response(serializer.data, status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    def custom_destroy(self, request, id, attribute):
-        recipe = get_object_or_404(Recipe, pk=id)
-        queryset = getattr(recipe, attribute)
-        data = (
-            queryset.filter(
-                user=request.user
-            )
-        )
-        if data.exists():
-            data.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class ShoppingCartViewSet(viewsets.ViewSet, CustomCreateAndDeleteMixin):
