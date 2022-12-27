@@ -4,14 +4,15 @@ from django.contrib.auth.hashers import check_password
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from .mixins import CustomCreateAndDeleteMixin
 from food.models import (AmountIngredient, FavoriteRecipe, Ingredient, Recipe,
                          ShoppingList, Tag)
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from users.models import Follow, User
-from .filters import RecipeFilterBackend, IngredientSearchFilterBackend
+
+from .filters import IngredientSearchFilterBackend, RecipeFilterBackend
+from .mixins import CustomCreateAndDeleteMixin
 from .permissions import RecipePermission, UserPermission
 from .serializers import (FollowSerializer, FullRecipeSerializer,
                           IngredientSerializer, PasswordSerializer,
@@ -133,7 +134,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_backends = (RecipeFilterBackend,)
 
     def get_serializer_class(self):
-        if self.action == 'create' or self.action == 'partial_update':
+        if self.action in ('create', 'partial_update'):
             return RecordRecipeSerializer
         return FullRecipeSerializer
 
