@@ -170,7 +170,6 @@ class RecordRecipeSerializer(FullRecipeSerializer):
         try:
             AmountIngredient.objects.bulk_create(queryset_amount_ingredients)
         except Exception:
-            # print('Ошибка записи в БД', e)
             return queryset_tags, queryset_amount_ingredients
 
     def create(self, validated_data):
