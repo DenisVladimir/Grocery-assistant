@@ -71,8 +71,7 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/foodgramm_frontend:latest
           file: frontend/Dockerfile
   
- deploy:
-    if: github.ref == 'refs/heads/master' || 'refs/heads/main'
+  deploy:
     name: Deploy to yandex-server
     runs-on: ubuntu-latest
     needs:
