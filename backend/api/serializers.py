@@ -21,9 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
             return obj.following.filter(
                 user=self.context['request'].user
             ).exists()
-        else:
-            return None
-
+        
     def validate(self, data):
         if data.get('username') == 'me':
             raise serializers.ValidationError(
