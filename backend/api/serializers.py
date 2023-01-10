@@ -21,7 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
             return obj.following.filter(
                 user=self.context['request'].user
             ).exists()
-        
+
     def validate(self, data):
         if data.get('username') == 'me':
             raise serializers.ValidationError(
@@ -159,7 +159,7 @@ class RecordRecipeSerializer(FullRecipeSerializer):
 
         queryset_amount_ingredients = [(get_object_or_404(
             Ingredient, pk=new_ingredient['id']
-            )) for new_ingredient in ingredients]
+        )) for new_ingredient in ingredients]
         '''queryset_amount_ingredients = []
         for new_ingredient in ingredients:
             ingredient = get_object_or_404(
