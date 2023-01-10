@@ -56,7 +56,7 @@ jobs:
             key: ${{ secrets.SSH_KEY }}
             passphrase: ${{ secrets.PASSPHRASE }}
             script: |
-              sudo docker pull denchik79/foodgra:latest
+              sudo docker pull denchik79/foodgramm:latest
               sudo docker-compose stop
               sudo docker-compose rm backend
               touch .env
