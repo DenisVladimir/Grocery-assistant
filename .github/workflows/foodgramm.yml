@@ -21,63 +21,36 @@ jobs:
       run: |
         python -m flake8
         
-  build_and_push_foodgramm_backend_to_docker_hub:
-    if: github.ref == 'refs/heads/master' || 'refs/heads/main'
-    name: Push foodgramm_backend image to Docker Hub
+  build_and_push_to_docker_hub:
+    name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     needs: tests
     steps:
+      -steps:
       - name: Check out the repo
-        uses: actions/checkout@v2
-
+        uses: actions/checkout@v2 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Login to Docker
-        uses: docker/login-action@v1
+        uses: docker/setup-buildx-action@v1 
+      - name: Login to Docker 
+        uses: docker/login-action@v1 
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: ${{ secrets.DOCKER_USERNAME }} 
           password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Push to Docker Hub
-        uses: docker/build-push-action@v2
+      - name: Push to Docker Hub backend
+        uses: docker/build-push-action@v2 
         with:
+          context: ./backend
+          file: ./backend/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/foodgramm_backend:latest
-          file: backend/Dockerfile
-
-  build_and_push_foodgramm_frontend_to_docker_hub:
-    if: github.ref == 'refs/heads/master' || 'refs/heads/main'
-    name: Push foodgramm_frontend image to Docker Hub
-    runs-on: ubuntu-latest
-    needs: tests
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Login to Docker
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Push to Docker Hub
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/foodgramm_frontend:latest
-          file: frontend/Dockerfile
-  
+          tags: denchik79/backend_foodgramm:latest
+      
   deploy:
     name: Deploy to yandex-server
     runs-on: ubuntu-latest
     needs:
       - tests
-      - build_and_push_foodgramm_backend_to_docker_hub
-      - build_and_push_foodgramm_frontend_to_docker_hub
+      - build_and_push_to_docker_hub
+      
     steps:
 
     - name: executing remote ssh commands to deploy
@@ -98,8 +71,7 @@ jobs:
           echo DB_HOST=${{ secrets.DB_HOST }} >> .env
           echo DB_PORT=${{ secrets.DB_PORT }} >> .env
           sudo docker-compose down
-          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgramm_backend:latest
-          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgramm_frontend:latest
+          sudo docker pull denchik79/backend_foodgramm:latest
           sudo docker-compose up -d --build
 
   send_message:
