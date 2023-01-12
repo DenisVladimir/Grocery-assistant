@@ -8,7 +8,7 @@ services:
       - ./.env
   
   backend:
-    image: denchik79/backend_foodgramm:latest
+    image: denchik79/foodgramm_backend:latest
     restart: always
     volumes:
       - static_value:/app/static/
@@ -20,11 +20,11 @@ services:
       - ./.env 
 
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: denchik79/foodgramm_frontend_:latest
     volumes:
       - ../frontend/:/app/result_build/
+    depends_on:
+      - backend
     
   nginx:
     image: nginx:1.19.3

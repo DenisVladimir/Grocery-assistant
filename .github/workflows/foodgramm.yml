@@ -41,8 +41,15 @@ jobs:
         context: ./backend
         file: ./backend/Dockerfile
         push: true
-        tags: denchik79/backend_foodgramm:latest
-      
+        tags: denchik79/foodgramm_backend:latest
+    - name: Push to Docker Hub Frontend
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        context: frontend/
+        tags: denchik79/foodgramm_frontend_:latest
+
+
   deploy:
     name: Deploy to yandex-server
     runs-on: ubuntu-latest
@@ -62,17 +69,22 @@ jobs:
         passphrase: ${{ secrets.PASSPHRASE }}
 
         script: |
-          sudo touch .env
+          sudo docker pull denchik79/foodgramm_backend:latest
+          sudo docker pull denchik79/foodgramm_frontend_:latest
+          sudo docker-compose stop
+          sudo docker-compose rm backend
+          sudo docker-compose rm frontend
+          rm .env
+          touch .env
+          echo DEBUG=${{ secrets.DEBUG }} >> .env
           echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
           echo DB_NAME=${{ secrets.DB_NAME }} >> .env
           echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
-          echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
+          echo 'POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}' >> .env
           echo DB_HOST=${{ secrets.DB_HOST }} >> .env
           echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-          sudo docker-compose down
-          sudo docker pull denchik79/backend_foodgramm:latest
           sudo docker-compose up -d --build
-
+          
   send_message:
     runs-on: ubuntu-latest
     needs: deploy
