@@ -47,7 +47,7 @@ jobs:
       with:
         push: true
         context: frontend/
-        tags: denchik79/foodgramm_frontend_:latest
+        tags: denchik79/foodgramm_frontend:latest
 
 
   deploy:
@@ -70,7 +70,7 @@ jobs:
 
         script: |
           sudo docker pull denchik79/foodgramm_backend:latest
-          sudo docker pull denchik79/foodgramm_frontend_:latest
+          sudo docker pull denchik79/foodgramm_frontend:latest
           sudo docker-compose stop
           sudo docker-compose rm backend
           sudo docker-compose rm frontend
@@ -84,7 +84,7 @@ jobs:
           echo DB_HOST=${{ secrets.DB_HOST }} >> .env
           echo DB_PORT=${{ secrets.DB_PORT }} >> .env
           sudo docker-compose up -d --build
-          
+
   send_message:
     runs-on: ubuntu-latest
     needs: deploy
