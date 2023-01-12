@@ -10,12 +10,12 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.8
+        python-version: 3.9
     - name: Install dependencies
       run: | 
+        cd backend/
         python -m pip install --upgrade pip 
         pip install flake8 pep8-naming flake8-broken-line flake8-return
-        cd backend
         pip install -r requirements.txt
     - name: Test with flake8
       run: |
@@ -38,8 +38,7 @@ jobs:
     - name: Push to Docker Hub backend
       uses: docker/build-push-action@v2 
       with:
-        context: ./backend
-        file: ./backend/Dockerfile
+        context: backend/
         push: true
         tags: denchik79/foodgramm_backend:latest
     - name: Push to Docker Hub Frontend
