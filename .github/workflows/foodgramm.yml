@@ -10,7 +10,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: 3.8
     - name: Install dependencies
       run: | 
         cd backend/
@@ -38,17 +38,9 @@ jobs:
     - name: Push to Docker Hub backend
       uses: docker/build-push-action@v2 
       with:
-        context: backend/
         push: true
         tags: denchik79/foodgramm_backend:latest
-    - name: Push to Docker Hub Frontend
-      uses: docker/build-push-action@v2
-      with:
-        push: true
-        context: frontend/
-        tags: denchik79/foodgramm_frontend:latest
-
-
+    
   deploy:
     name: Deploy to yandex-server
     runs-on: ubuntu-latest
@@ -69,10 +61,8 @@ jobs:
 
         script: |
           sudo docker pull denchik79/foodgramm_backend:latest
-          sudo docker pull denchik79/foodgramm_frontend:latest
           sudo docker-compose stop
           sudo docker-compose rm backend
-          sudo docker-compose rm frontend
           rm .env
           touch .env
           echo DEBUG=${{ secrets.DEBUG }} >> .env
