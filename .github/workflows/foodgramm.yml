@@ -63,7 +63,7 @@ jobs:
         script: |
           sudo docker pull denchik79/foodgramm_backend:latest
           sudo docker-compose stop
-          sudo docker-compose rm backend
+          sudo docker-compose rm web
           rm .env
           touch .env
           echo DEBUG=${{ secrets.DEBUG }} >> .env
