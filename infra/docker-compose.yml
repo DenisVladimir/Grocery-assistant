@@ -14,10 +14,11 @@ services:
       - .env
   
   web:
-    build: ../backend
+    image: denchik79/foodgramm_backend:latest
     restart: always
-    ports:
-      - 8000:8000
+    volumes:
+      - static_volue:/code/static/
+      - media_volue:/code/media/
     depends_on:
       - db
     env_file:
