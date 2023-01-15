@@ -40,7 +40,8 @@ jobs:
       with:
         push: true
         tags: denchik79/foodgramm_backend:latest
-    
+        file: backend/Dockerfile
+            
   deploy:
     name: Deploy to yandex-server
     runs-on: ubuntu-latest
