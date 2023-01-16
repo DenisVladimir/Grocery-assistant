@@ -17,8 +17,8 @@ services:
     image: denchik79/foodgramm_backend:latest
     restart: always
     volumes:
-      - static:/code/static/
-      - media:/code/media/
+      - static:/app/static/
+      - media:/app/media/
     depends_on:
       - db
     env_file:
