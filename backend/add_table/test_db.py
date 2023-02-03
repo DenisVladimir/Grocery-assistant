@@ -27,7 +27,7 @@ if __name__ == "__main__":
                 f"INSERT INTO {name_table}"
                 " VALUES ({ID}, '{name}', '{measurement_unit}')"
             )
-            ID += 1  # прибавления ID    
+            ID += 1  # прибавления ID
         print("Record inserted successfully")
 
     conn.commit()  # закрытие курсора
