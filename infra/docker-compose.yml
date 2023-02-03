@@ -20,9 +20,7 @@ services:
       - ./.env
   
   frontend:
-    build:
-      image: denchik79/foodgramm_frontend:latest
-      dockerfile: Dockerfile
+    image: denchik79/foodgramm_frontend:latest
     volumes:
      - ../frontend:/app/result_build/
     depends_on:
