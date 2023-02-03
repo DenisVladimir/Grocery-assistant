@@ -9,7 +9,7 @@ services:
       - ./.env
           
   backend:
-    image: denchik79/foodgramm_backend:latest
+    build: ../backend
     restart: always
     ports:
       - 8000:8000
@@ -23,7 +23,7 @@ services:
   
   frontend:
     build:
-      image: denchik79/foodgramm_frontend:latest
+      context: ../frontend
       dockerfile: Dockerfile
     volumes:
      - ../frontend:/app/result_build/
