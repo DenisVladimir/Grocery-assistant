@@ -23,10 +23,7 @@ if __name__ == "__main__":
             name = item['name']  # название продукта
             # еденица измерения продукта
             measurement_unit = item['measurement_unit']
-            cursor.execute(
-                f"INSERT INTO '{name_table}'"
-                " VALUES ('{ID}', '{name}', '{measurement_unit}')"
-            )
+            cursor.execute(f"INSERT INTO {name_table} VALUES ({ID}, '{name}', '{measurement_unit}')")
             ID += 1  # прибавления ID
         print("Record inserted successfully")
 
