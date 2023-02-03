@@ -11,8 +11,6 @@ services:
   backend:
     image: denchik79/foodgramm_backend:latest
     restart: always
-    ports:
-      - 8000:8000
     depends_on:
       - db
     volumes:
