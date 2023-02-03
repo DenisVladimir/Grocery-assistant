@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-4p%t+&u0*92x(s7j7!l=$71ha(2@u^&0k%vf7vyg)6_u(b_=&p'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = ['*']
 
@@ -79,15 +79,26 @@ DATABASES = {
     'default': {
         'ENGINE': os.getenv(
             'DB_ENGINE',
-            default='django.db.backends.postgresql'
+            default='django.db.backends.postgresql_psycopg2'
         ),
-        'NAME': os.getenv('DB_NAME'),
+        'NAME': os.getenv('POSTGRES_DB'),
         'USER': os.getenv('POSTGRES_USER'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
         'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT')
     }
 }
+
+# DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#        'NAME': 'food',
+#        'USER': 'denis',
+#        'PASSWORD': 'password',
+#        'HOST': 'db',
+#        'PORT': '5432'
+#    }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

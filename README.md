@@ -1,76 +1,87 @@
-Сервис FoodGramm «Продуктовый помощник» 
-=====
+# Продуктовый помощник
+![example workflow](https://github.com/DenisVladimir/foodgram-project-react/actions/workflows/foodgramm.yml/badge.svg)
+### Технологии:
+[![Python](https://img.shields.io/badge/-Python-464646?style=flat-square&logo=Python)](https://www.python.org/) [![Django](https://img.shields.io/badge/-Django-464646?style=flat-square&logo=Django)](https://www.djangoproject.com/) [![Django REST Framework](https://img.shields.io/badge/-Django%20REST%20Framework-464646?style=flat-square&logo=Django%20REST%20Framework)](https://www.django-rest-framework.org/) [![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-464646?style=flat-square&logo=PostgreSQL)](https://www.postgresql.org/) [![Nginx](https://img.shields.io/badge/-NGINX-464646?style=flat-square&logo=NGINX)](https://nginx.org/ru/) [![gunicorn](https://img.shields.io/badge/-gunicorn-464646?style=flat-square&logo=gunicorn)](https://gunicorn.org/) [![docker](https://img.shields.io/badge/-Docker-464646?style=flat-square&logo=docker)](https://www.docker.com/) [![GitHub%20Actions](https://img.shields.io/badge/-GitHub%20Actions-464646?style=flat-square&logo=GitHub%20actions)](https://github.com/features/actions) [![Yandex.Cloud](https://img.shields.io/badge/-Yandex.Cloud-464646?style=flat-square&logo=Yandex.Cloud)](https://cloud.yandex.ru/)
 
-Описание проекта
-----------
-Проект создан в рамках учебного курса Яндекс.Практикум.
+## Описание проекта:
 
-Cайт Foodgram («Продуктовый помощник») создан для начинающих кулинаров и изысканныю гурманов. В сервисе пользователи смогут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
+#### «Продуктовый помощник»: приложение в котором можно публиковать рецепты, добавлять чужие рецепты в избранное и подписываться на публикации других авторов.
+#### Сервис «Список покупок» позволит создавать список продуктов, которые нужно купить для приготовления выбранных блюд, и получить его в формате PDF.
 
-Проект разворачивается в Docker контейнерах: backend-приложение API, postgresql-база данных, nginx-сервер и frontend-контейнер (используется только для сборки файлов и после запуска останавливается). 
+## Запуск проекта на сервере:
 
-Реализовано CI и CD проекта. При пуше изменений в главную ветку проект автоматически тестируется на соотвествие требованиям PEP8. После успешного прохождения тестов, на git-платформе собирается образ backend-контейнера Docker и автоматически размешается в облачном хранилище DockerHub. Размещенный образ автоматически разворачивается на боевом сервере вмете с контейнером веб-сервера nginx и базой данных PostgreSQL.
+#### Склонировать репозиторий
+> https://github.com/DenisVladimir/foodgram-project-react.git
 
-[Ссылка на размещенный проект на сервере Yandex.Cloud](http://)
+## Подготовка сервера:
 
-Системные требования
-----------
-* Python 3.7+
-* Docker
-* Works on Linux, Windows, macOS, BSD
+#### Обновить индекс пакетов APT
+>sudo apt update 
 
-Стек технологий
-----------
-* Python 3.7
-* Django 3.1
-* Rest API
-* PostgreSQL
-* Nginx
-* gunicorn
-* Docker
-* DockerHub
-* JS
-* GitHub Actions (CI/CD)
+#### Обновите установленные в системе пакеты и установите обновления безопасности
+>sudo apt upgrade -y
 
-Установка проекта из репозитория (Linux и macOS)
-----------
+#### Установить менеджер пакетов pip, утилиту для создания виртуального окружения venv, систему контроля версий git, чтобы клонировать ваш проект.
+>sudo apt install python3-pip python3-venv git -y
 
-1. Клонировать репозиторий и перейти в него в командной строке:
-```bash
-git clone git@github.com:DenisVladimir/foodgram-project-react.git
+#### Установите на свой сервер Docker
+>sudo apt install docker.io
 
-cd foodgram-project-react
-```
-2. Cоздать и открыть файл ```.env``` с переменными окружения:
-```bash 
-cd infra
+#### Установите docker-compose
+>sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
-touch .env
-```
-3. Заполнить ```.env``` файл с переменными окружения по примеру:
-```bash 
-echo DB_ENGINE=django.db.backends.postgresql >> .env
+>sudo chmod +x /usr/local/bin/docker-compose
 
-echo DB_NAME=postgres >> .env
+#### Загрузите файлы docker-compose.yaml и nginx.conf на удалённый сервер.
+>scp /home/denis/<Путь к проекту>/infra/nginx.conf  <login>@<IP>:/home/<Имя>
 
-echo POSTGRES_PASSWORD=postgres >> .env
+>scp /home/denis/<Путь к проекту>/infra/docker-compose.yaml  <login>@<IP>:/home/<Имя>
 
-echo POSTGRES_USER=postgres >> .env
+#### Добавьте в Secrets GitHub переменные окружения:
 
-echo DB_HOST=db >> .env
+>DB_ENGINE = "django.db.backends.postgresql"
 
-echo DB_PORT=5432 >> .env
-```
-4. Установка и запуск приложения в контейнерах (контейнер backend загружактся из DockerHub):
-```bash 
-docker-compose up -d
-```
+>DB_NAME = "имя базы данных postgres"
 
-5. Запуск миграций, сбор статики и заполнение БД:
-```bash 
-docker-compose exec backend python manage.py migrate
+>DB_USER = "пользователь бд"
 
-docker-compose exec backend python manage.py collectstatic --no-input 
+>DB_PASSWORD = "пароль"
 
-docker-compose exec backend python manage.py loaddata fixtures.json
-```
+>DB_HOST = "db"
+
+>DB_PORT = "5432"
+
+>DOCKER_PASSWORD=<пароль от DockerHub>
+
+>DOCKER_USERNAME=<имя пользователя>
+
+>DJANGO_SK=<секретный ключ проекта django>
+
+>USER=<username для подключения к серверу>
+
+>HOST=<IP сервера>
+
+>PASSPHRASE=<пароль для сервера, если он установлен>
+
+>SSH_KEY=<ваш SSH ключ (для получения команда: cat ~/.ssh/id_rsa)>(Копировать полностью)
+
+
+## Workflow состоит из трёх шагов:
+##### Тестирование проекта PEP8.
+##### Сборка и публикация образа.
+##### Автоматический деплой на сервер.
+
+#### Собрать контейнеры на удалённом сервере
+>sudo docker-compose up -d --build
+
+#### Выполнить миграции, собрать статику, создать суперпользователя(По необходимости)
+>sudo docker-compose exec backend python manage.py migrate
+
+>sudo docker-compose exec backend python manage.py collectstatic
+
+>sudo docker-compose exec backend python manage.py createsuperuser
+
+#### Загрузить ингредиенты в базу данных
+>sudo docker-compose exec backend python manage.py load_ingredients ingredients.json
+
+## Проект доступен по [адресу](http://51.250.92.61/)
