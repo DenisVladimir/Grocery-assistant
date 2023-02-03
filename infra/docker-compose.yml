@@ -1,31 +1,37 @@
 version: '3.3'
 
-volumes:
-  postgres_data:
-  static:
-  media:
-
 services:
   db:
-    image: postgres:14.0
+    image: postgres:14.6
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - db_volue:/var/lib/postgresql/data/
     env_file:
-      - .env
-  
+      - ./.env
+          
   backend:
-    image: denchik79/foodgramm_backend:latest
+    build: ../backend
     restart: always
-    volumes:
-      - static:/app/static/
-      - media:/app/media/
+    ports:
+      - 8000:8000
     depends_on:
       - db
+    volumes:
+      - static_volue:/app/static/
+      - media_volue:/app/media/
     env_file:
-      - .env 
-      
+      - ./.env
+  
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    volumes:
+     - ../frontend:/app/result_build/
+    depends_on:
+      - backend
+
   nginx:
-    image: nginx:1.19.3
+    image: nginx:1.21.3
     ports:
       - "80:80"
     depends_on:
@@ -33,5 +39,12 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/
-      - ./media:/var/html/media/
       - ../docs/:/usr/share/nginx/html/api/docs/
+      - static_volue:/var/html/static/
+      - media_volue:/var/html/media/
+
+volumes:
+  db_volue:
+  result_build:
+  static_volue:
+  media_volue:
