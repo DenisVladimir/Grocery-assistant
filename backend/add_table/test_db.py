@@ -18,12 +18,15 @@ if __name__ == "__main__":
     # Подключение к Json file
     with open('ingredients.json', encoding='utf-8') as f:
         d = json.load(f)
-        ID = 1 # Айди продукта надо проверить может наччинается с 0
+        ID = 1  # Айди продукта надо проверить может наччинается с 0
         for item in d:
             name = item['name']  # название продукта
             # еденица измерения продукта
             measurement_unit = item['measurement_unit']
-            cursor.execute(f"INSERT INTO {name_table} VALUES ({ID}, '{name}', '{measurement_unit}')")
+            cursor.execute(
+                f"INSERT INTO {name_table}"
+                " VALUES ({ID}, '{name}', '{measurement_unit}')"
+            )
             ID += 1  # прибавления ID    
         print("Record inserted successfully")
 
