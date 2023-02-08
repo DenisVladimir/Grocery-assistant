@@ -15,8 +15,8 @@ from .filters import IngredientSearchFilterBackend, RecipeFilterBackend
 from .permissions import RecipePermission, UserPermission
 from .serializers import (FollowSerializer, FullRecipeSerializer,
                           IngredientSerializer, PasswordSerializer,
-                          RecordRecipeSerializer, SmallRecipeSerializer, TagSerializer,
-                          UserSerializer)
+                          RecordRecipeSerializer, SmallRecipeSerializer,
+                          TagSerializer, UserSerializer)
 from .utils import PageLimitPaginator, delete_old_ingredients
 
 
@@ -206,6 +206,7 @@ class CustomCreateAndDeleteMixin:
             data.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 class ShoppingCartViewSet(viewsets.ViewSet, CustomCreateAndDeleteMixin):
     permission_classes = (permissions.IsAuthenticated,)
