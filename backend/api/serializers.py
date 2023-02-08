@@ -156,21 +156,23 @@ class RecordRecipeSerializer(FullRecipeSerializer):
     def taking_validated_data(self, validated_data):
         queryset_tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
-
-        queryset_amount_ingredients = [(get_object_or_404(
-            Ingredient, pk=new_ingredient['id']
-        )) for new_ingredient in ingredients]
-        '''queryset_amount_ingredients = []
+        queryset_amount_ingredients = []
         for new_ingredient in ingredients:
             ingredient = get_object_or_404(
                 Ingredient,
                 pk=new_ingredient['id']
             )
-            queryset_amount_ingredients.append(ingredient)'''
-        try:
-            AmountIngredient.objects.bulk_create(queryset_amount_ingredients)
-        except Exception:
-            return queryset_tags, queryset_amount_ingredients
+            amount_ingredient, created = (
+                AmountIngredient.objects.get_or_create(
+                    ingredient=ingredient,
+                    amount=new_ingredient['amount']
+                )
+            )
+            if created:
+                amount_ingredient.save()
+            queryset_amount_ingredients.append(amount_ingredient)
+
+        return queryset_tags, queryset_amount_ingredients
 
     def create(self, validated_data):
         author = self.context['request'].user
