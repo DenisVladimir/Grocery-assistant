@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from food.models import AmountIngredient, Ingredient, Recipe, Tag
 from rest_framework import serializers
-from users.models import CustomUser, Follow, User
+from users.models import CustomUser, User
 from .utils import delete_old_ingredients
 
 
@@ -39,7 +39,7 @@ class FollowSerializer(UserSerializer):
     recipes_count = serializers.SerializerMethodField()
 
     class Meta:
-        model = Follow
+        model = User
         fields = (
             'email', 'id', 'username', 'first_name',
             'last_name', 'is_subscribed', 'recipes', 'recipes_count'
